@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    # 로컬 MariaDB 연결
+    url: jdbc:mariadb://127.0.0.1:3306/LAPLACE
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: minyeop
+    password: skekd12
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # ✅ 자동 테이블 생성, 기존 데이터 유지 (필요 시 update → validate)
+    show-sql: true       # ✅ SQL 쿼리 로깅 활성화
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+        format_sql: true  # ✅ SQL 쿼리 가독성 향상
+
+  kafka:
+    bootstrap-servers: host.docker.internal:29092
+    # Docker 내부 접근 시 (컨테이너에서 실행 중이라면 사용)
+    # bootstrap-servers: localhost:9092
+    topic: stock-data-topic
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: stock-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    listener:
+      ack-mode: manual_immediate
+
+upbit:
+  base-url: https://api.upbit.com/v1
