@@ -10,7 +10,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.stock.richman.model.StockData;
+import org.stock.richman.model.AssetData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class KafkaConfig {
 
     @Bean
-    public ProducerFactory<String, StockData> producerFactory() {
+    public ProducerFactory<String, AssetData> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -29,24 +29,24 @@ public class KafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, StockData> kafkaTemplate() {
+    public KafkaTemplate<String, AssetData> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ConsumerFactory<String, StockData> consumerFactory() {
+    public ConsumerFactory<String, AssetData> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "stock-group");
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(StockData.class));
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(AssetData.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, StockData> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, StockData> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, AssetData> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, AssetData> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;

@@ -9,7 +9,7 @@ import org.springframework.http.*;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.stock.richman.model.StockData;
+import org.stock.richman.model.AssetData;
 import org.stock.richman.model.StockEntity;
 import org.stock.richman.repository.StockEntityRepository;
 import org.stock.richman.repository.StockRepository;
@@ -31,7 +31,7 @@ public class StockDataService {
     @Autowired
     private StockEntityRepository stockEntityRepository;
     @Autowired
-    private KafkaTemplate<String, StockData> kafkaTemplate;
+    private KafkaTemplate<String, AssetData> kafkaTemplate;
 
     @Value("${koreainvestment.api.app-key}")
     private String APP_KEY;
@@ -64,13 +64,13 @@ public class StockDataService {
                 String stockName = getStockName(symbol);
                 double currentPrice = output.path("stck_prpr").asDouble();
 
-                StockData stockData = new StockData();
-                stockData.setName(stockName);
-                stockData.setSymbol(symbol);
-                stockData.setPrice(currentPrice);
-                stockData.setTimestamp(LocalDateTime.now());
+                AssetData assetData = new AssetData();
+                assetData.setName(stockName);
+                assetData.setSymbol(symbol);
+                assetData.setPrice(currentPrice);
+                assetData.setTimestamp(LocalDateTime.now());
 
-                kafkaTemplate.send("stock-data-topic", stockData);
+                kafkaTemplate.send("stock-data-topic", assetData);
             } else {
                 System.out.println("데이터 조회 실패: " + response.getStatusCode());
             }

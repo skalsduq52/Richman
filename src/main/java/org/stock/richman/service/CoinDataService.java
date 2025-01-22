@@ -9,12 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.stock.richman.model.StockData;
+import org.stock.richman.model.AssetData;
 import org.stock.richman.model.StockEntity;
 import org.stock.richman.repository.StockEntityRepository;
 import org.stock.richman.repository.StockRepository;
 
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +31,7 @@ public class CoinDataService {
     @Autowired
     private StockRepository stockRepository;
     @Autowired
-    private KafkaTemplate<String, StockData> kafkaTemplate;
+    private KafkaTemplate<String, AssetData> kafkaTemplate;
 
 //    @Value("${alpha.vantage.api-key}")
 //    private String API_KEY;
@@ -51,14 +50,14 @@ public class CoinDataService {
             JsonNode firstData = jsonNode.get(0);
             long price = firstData.get("trade_price").asLong();
 
-            StockData stockData = new StockData();
-            stockData.setName(getCoinName(symbol));
-            stockData.setSymbol(symbol);
-            stockData.setPrice(price);
-            stockData.setTimestamp(LocalDateTime.now());
+            AssetData assetData = new AssetData();
+            assetData.setName(getCoinName(symbol));
+            assetData.setSymbol(symbol);
+            assetData.setPrice(price);
+            assetData.setTimestamp(LocalDateTime.now());
 
             // Kafka로 전송
-            kafkaTemplate.send("stock-data-topic", stockData);
+            kafkaTemplate.send("stock-data-topic", assetData);
 
         } catch (Exception e) {
             e.printStackTrace();

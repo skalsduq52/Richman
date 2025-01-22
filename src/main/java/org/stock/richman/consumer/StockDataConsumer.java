@@ -3,7 +3,7 @@ package org.stock.richman.consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-import org.stock.richman.model.StockData;
+import org.stock.richman.model.AssetData;
 import org.stock.richman.repository.StockRepository;
 import org.stock.richman.service.SlackService;
 
@@ -16,27 +16,27 @@ public class StockDataConsumer {
     private SlackService slackService;
 
     @KafkaListener(topics = "stock-data-topic", groupId = "stock-group")
-    public void consumeStockData(StockData stockData){
-        stockRepository.save(stockData);
+    public void consumeStockData(AssetData assetData){
+        stockRepository.save(assetData);
     }
 
     @KafkaListener(topics = "stock-data-topic", groupId = "alert-group")
-    public void alertStockData(StockData stockData){
+    public void alertStockData(AssetData assetData){
 
-        long price = (long) stockData.getPrice();
+        long price = (long) assetData.getPrice();
         boolean flagAlert = false;
         String alertType = "";
 
-        if(stockData.getHighValue()<price){
+        if(assetData.getHighValue()<price){
             flagAlert = true;
             alertType = "High";
-        }else if(stockData.getLowValue()>price){
+        }else if(assetData.getLowValue()>price){
             flagAlert = true;
             alertType = "Low";
         }
 
         if(flagAlert){
-            slackService.sendMessage(stockData,alertType);
+            slackService.sendMessage(assetData,alertType);
         }
 
     }

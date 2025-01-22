@@ -7,13 +7,12 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-public class StockData {
+public class AssetData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +20,7 @@ public class StockData {
     private String symbol;
     private String name;
     private double price;
-    private long highValue = 130000000;
+    private long highValue;
     private long lowValue;
     private LocalDateTime timestamp;
 }
